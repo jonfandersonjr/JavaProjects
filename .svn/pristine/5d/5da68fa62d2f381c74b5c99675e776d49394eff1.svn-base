@@ -1,0 +1,224 @@
+/*
+ * TCSS 305 - Assignment 6 Tetris
+ */
+package view;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JSlider;
+import javax.swing.Timer;
+import model.Board;
+import view.TetrisGUI.MyKeyListener;
+
+/**
+ * Constructs a Menu Bar item to be used in my tetris game.
+ * @author Jon Anderson
+ * @version May 18
+ *
+ */
+public class TetrisMenu extends JMenuBar {
+
+    /**
+     * Auto Generated serial ID number.
+     */
+    private static final long serialVersionUID = 6523545150132007076L;
+
+    /**
+     * Max level for tetris game.
+     */
+    private static final int MAX_DIFFICULTY = 9;
+
+    /**
+     * Tick space for level difficulty.
+     */
+    private static final int MAJOR_TICK_SPACE = 2;
+    
+    /**
+     * Square size for a small display.
+     */
+    private static final int SMALL_DISPLAY = 25;
+    
+    /**
+     * Square size for a medium display.
+     */
+    private static final int MEDIUM_DISPLAY = 35;
+    
+    /**
+     * Square size for a large display.
+     */
+    private static final int LARGE_DISPLAY = 45;
+    
+    /**
+     * The board I will be loading into.
+     */
+    private final Board myBoard;
+    
+    /**
+     * Access to my game timer.
+     */
+    private final Timer myTimer;
+    
+    /**
+     * My TetrisGUI and access to its methods.
+     */
+    private final TetrisGUI myGUI;
+    
+    /**
+     * My Key Listener for the game.
+     */
+    private final MyKeyListener myKeyListener;
+
+    /**
+     * Constructs a menu bar for the Tetris Game.
+     * @param theBoard I will be resetting to.
+     * @param theTimer for the game.
+     * @param theGUI connection to the tetris GUI.
+     * @param theKeyListener for the game.
+     */
+    public TetrisMenu(final Board theBoard, final Timer theTimer, 
+                      final TetrisGUI theGUI, final MyKeyListener theKeyListener) {
+        super();
+        myBoard = theBoard;
+        myTimer = theTimer;
+        myGUI = theGUI;
+        myKeyListener = theKeyListener;
+        add(createFileMenu());
+        add(createOptionsMenu());
+        add(createHelpMenu());
+        if (isSelected()) {
+            myGUI.pauseGame();
+        }
+
+    }
+
+    /**
+     * Creates a file menu in my menu bar which contains the option to quit the program.
+     * @return a completed file menu.
+     */
+    private JMenu createFileMenu() {
+        final JMenu file = new JMenu("File");
+        file.setMnemonic(KeyEvent.VK_F);
+        final JMenuItem quit = new JMenuItem("Quit");
+        quit.setMnemonic(KeyEvent.VK_Q);
+        quit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+                System.exit(ABORT);
+            }
+        });
+        final JMenuItem newGame = new JMenuItem("New Game");
+        newGame.setMnemonic(KeyEvent.VK_N);
+        newGame.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent theAction) {
+                myBoard.newGame();
+                myTimer.start();
+                myKeyListener.setDisabled(false);
+            }
+        });
+        file.add(newGame);
+        file.addSeparator();
+        file.add(quit);
+        return file;
+    }
+
+    /**
+     * Creates an options menu for the Tetris game.
+     * @return an options menu to my menu bar.
+     */
+    private JMenu createOptionsMenu() {
+        final JMenu options = new JMenu("Options");
+        options.setMnemonic(KeyEvent.VK_O);
+        final JMenu level = new JMenu("Select Level");
+        final JMenuItem displaySize = new JMenuItem("Display Size...");
+        displaySize.setMnemonic(KeyEvent.VK_D);
+        displaySize.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent theEvent) {
+                myGUI.pauseGame();
+                myGUI.start();
+            }
+        });
+        options.add(level);
+        options.addSeparator();
+        options.add(displaySize);
+        level.add(sliderBuilder());
+        return options;
+    }
+
+    /**
+     * Constructs a Help Menu for the Tetris menu bar.
+     * @return the constructed Help Menu.
+     */
+    private JMenu createHelpMenu() {
+        final String title = "About...";
+        final JMenu helpMenu = new JMenu("Help");
+        helpMenu.setMnemonic(KeyEvent.VK_H);
+        final JMenuItem about = new JMenuItem(title);
+        about.setMnemonic(KeyEvent.VK_A);
+        helpMenu.add(about);
+        about.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+                JOptionPane.showMessageDialog(null, "Jon Anderson \n"
+                                + "Spring 2015 \n"
+                                + "TCSS 305 Tetris");
+            }
+        });
+        return helpMenu;
+    }
+    
+    /**
+     * Creates a slider which allows the user to change the level difficulty.
+     * @return a slider to select level difficulty.
+     */
+    private JSlider sliderBuilder() {
+        final JSlider slider = new JSlider(1, MAX_DIFFICULTY, 1);
+        slider.setMajorTickSpacing(MAJOR_TICK_SPACE);
+        slider.setMinorTickSpacing(1);
+        slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+        return slider;
+    }
+    
+    /**
+     * JOptionPane dialogue that determines the size for this game.
+     * @param theDefaultSize of this game.
+     * @return the size for this game.
+     */
+    protected int displaySize(final int theDefaultSize) {
+        myTimer.stop();
+        final JLabel boardSize = new JLabel("What size board would you like "
+                                            + "to play on?", JLabel.CENTER);
+        int displaySize = theDefaultSize;
+        final String[] options = new String[] {"Small", "Medium", "Large"};
+        final int response = JOptionPane.showOptionDialog(null, boardSize, "Game Size",
+            JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+            null, options, options[0]);
+        if (response == 0) {
+            displaySize = SMALL_DISPLAY;
+            myGUI.disposeOldFrame();
+        } else if (response == 1) {
+            displaySize = MEDIUM_DISPLAY;
+            myGUI.disposeOldFrame();
+        } else if (response == 2) {
+            displaySize = LARGE_DISPLAY;
+            myGUI.disposeOldFrame();
+        } else {
+            displaySize = 0;
+            if (!myGUI.isPause()) {
+                System.exit(ABORT);
+            }
+        }
+        return displaySize;
+    }
+    
+    
+
+}

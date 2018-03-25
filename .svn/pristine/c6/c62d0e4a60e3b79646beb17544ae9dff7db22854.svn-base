@@ -1,0 +1,215 @@
+/*
+ * TCSS 305 - Tetris
+ */
+package view;
+
+import com.sun.glass.events.KeyEvent;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
+import java.util.Observable;
+import java.util.Observer;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.Timer;
+import model.Board;
+
+/**
+ * Class which holds my GUI and all the panels within.
+ * 
+ * @author Jon Anderson
+ * @version May 19
+ */
+public class TetrisGUI implements Observer {
+    
+    /**
+     * Delay for timer.
+     */
+    private static final int TIMER_DELAY = 1000;
+    
+    /**
+     * Default size of the game - medium - 35 pixels per square.
+     */
+    private static final int DEFAULT_SIZE = 35;
+    
+    /**
+     * Default size for the game set to medium.
+     */
+    private int myGameSize = DEFAULT_SIZE;
+
+    /**
+     * Swing timer for the game.
+     */
+    private final Timer myTimer = new Timer(TIMER_DELAY - 500, new MyTimer());
+    
+    /**
+     * Boolean which tracks whether or not the game is paused.
+     */
+    private boolean myPause;
+    
+    /**
+     * My Icon for my frame.
+     */
+    private final ImageIcon myIcon = new ImageIcon("images/tetris.jpg");
+    
+    /**
+     * Label for Game Over JOptionPane.
+     */
+    private final JLabel myGameOver = new JLabel("Game Over!                ", JLabel.CENTER);
+    
+    //private final KeyListener myKeyListener = new KeyListener();
+    
+    /**
+     * Creates the board that we will be playing on.
+     */
+    private final Board myBoard = new Board();
+    
+    /**
+     * Creates the JFrame to hold all the panels for the game.
+     */
+    private JFrame myFrame;
+    
+    /**
+     * A menu bar with some features.
+     */
+    private final TetrisMenu myMenuBar = new TetrisMenu(myBoard, myTimer, this);
+    
+    /**
+     * Starts the Frame with all of the game panels.
+     */
+    public void start() {
+        final int blockSize = myMenuBar.displaySize(myGameSize);
+        
+        myFrame = new JFrame("Tetris");
+        myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        myFrame.setResizable(false);
+        
+        final GamePanel gamePanel = new GamePanel(blockSize, myBoard.getHeight());
+        final NextPiecePanel nextPiecePanel = new NextPiecePanel(blockSize);
+        myBoard.addObserver(nextPiecePanel);
+        final PiecePanel sidePanel = new PiecePanel(blockSize, nextPiecePanel);
+
+        
+        myBoard.addObserver(this);
+        myBoard.addObserver(gamePanel);
+        //myBoard.addObserver(nextPiecePanel);
+        
+        myFrame.add(gamePanel, BorderLayout.CENTER);
+        myFrame.add(sidePanel, BorderLayout.EAST);
+        myFrame.setJMenuBar(myMenuBar);
+        myFrame.addKeyListener(new MyKeyListener());
+        
+        //myBoard.addObserver(piecePanel);
+        
+        myFrame.setIconImage(myIcon.getImage());
+        myFrame.pack();
+        final int height = myFrame.getHeight() + 2;
+        myFrame.setSize(myFrame.getWidth(), height);
+        myFrame.setLocationRelativeTo(null);
+        myFrame.setVisible(true);
+    }
+
+
+    @Override
+    public void update(final Observable theObserv, final Object theObject) {
+        if (theObject instanceof Boolean) {
+            myTimer.stop();
+            JOptionPane.showMessageDialog(myFrame, myGameOver);
+        }
+    }
+    
+    /**
+     * Sets the default size of this game.
+     * @param theDefaultSize for the game.
+     */
+    protected void setDefaultSize(final int theDefaultSize) {
+        myGameSize = theDefaultSize;
+    }
+    
+    protected void performReset() {
+//        if (myFrame != null) {
+            myFrame.dispose();
+            start();
+      //  }
+    }
+    
+    /**
+     * Pauses or unpauses when called.
+     */
+    protected void togglePause() {
+        myPause = !myPause;
+        if (myPause) {
+            myTimer.stop();
+        } else {
+            myTimer.start();
+        }
+    }
+    
+    protected void startGame() {
+        myPause = false;
+        myTimer.start();
+    }
+    
+    protected void pauseGame() {
+        myPause = true;
+        myTimer.stop();
+    }
+    
+    /**
+     * Inner class with actions for Timer.
+     * @author Jon Anderson
+     */
+    class MyTimer implements ActionListener {
+        @Override
+        public void actionPerformed(final ActionEvent theAction) {
+            myTimer.start();
+            myBoard.step();
+        }
+    }
+    
+    /**
+     * Inner class with actions for Keys.
+     * @author Jon Anderson
+     *
+     */
+    class MyKeyListener implements KeyListener {
+
+        @Override
+        public void keyPressed(final java.awt.event.KeyEvent arg0) {
+            if (arg0.getKeyCode() == KeyEvent.VK_A
+             || arg0.getKeyCode() == KeyEvent.VK_LEFT) {
+                myBoard.left();
+            } else if (arg0.getKeyCode() == KeyEvent.VK_S
+                    || arg0.getKeyCode() == KeyEvent.VK_DOWN) {
+                myBoard.down();
+            } else if (arg0.getKeyCode() == KeyEvent.VK_D
+                    || arg0.getKeyCode() == KeyEvent.VK_RIGHT) {
+                myBoard.right();
+            } else if (arg0.getKeyCode() == KeyEvent.VK_W
+                    || arg0.getKeyCode() == KeyEvent.VK_UP) {
+                myBoard.rotateCW();
+            } else if (arg0.getKeyCode() == KeyEvent.VK_TAB
+                    || arg0.getKeyCode() == KeyEvent.VK_SHIFT) {
+                myBoard.rotateCCW();
+            } else if (arg0.getKeyCode() == KeyEvent.VK_SPACE) {
+                myBoard.drop();
+            } else if (arg0.getKeyCode() == KeyEvent.VK_P) {
+                togglePause();
+            }
+            
+        }
+
+        @Override
+        public void keyReleased(final java.awt.event.KeyEvent arg0) {
+        }
+
+        @Override
+        public void keyTyped(final java.awt.event.KeyEvent e2) {
+        }
+
+    }
+
+}

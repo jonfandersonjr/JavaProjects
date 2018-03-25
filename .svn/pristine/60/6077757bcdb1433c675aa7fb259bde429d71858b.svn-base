@@ -1,0 +1,67 @@
+/*
+ * TCSS 305 - Tetris
+ */
+package view;
+
+import java.awt.BorderLayout;
+import java.util.Observable;
+import javax.swing.JFrame;
+import model.Board;
+
+/**
+ * Class which holds my GUI and all the panels within.
+ * 
+ * @author Jon Anderson
+ * @version May 19
+ */
+public class TetrisGUI {
+    
+    /**
+     * Creates the board that we will be playing on.
+     */
+    private Board myBoard = new Board();
+    
+    /**
+     * Creates the JFrame to hold all the panels for the game.
+     */
+    private final JFrame myFrame = new JFrame("Tetris");
+    
+    /**
+     * The panel where the game will be played.
+     */
+    private final GamePanel myGamePanel = new GamePanel(myBoard);
+    
+    /**
+     * A menu bar with some features.
+     */
+    private final TetrisMenu myMenuBar = new TetrisMenu();
+    
+    /**
+     * A panel to hold the pieces.
+     */
+    private final PiecePanel myPiecePanel = new PiecePanel(myBoard);
+    
+    
+    /**
+     * 
+     */
+    public void start() {
+        myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                
+        myFrame.add(myGamePanel, BorderLayout.CENTER);
+        myFrame.add(myPiecePanel, BorderLayout.EAST);
+        myFrame.setJMenuBar(myMenuBar);
+        
+        myBoard.addObserver(myGamePanel);
+        myBoard.addObserver(myPiecePanel);
+        
+        
+        myBoard.newGame();
+        
+        
+        myFrame.pack();
+        myFrame.setLocationRelativeTo(null);
+        myFrame.setVisible(true);
+    }
+
+}

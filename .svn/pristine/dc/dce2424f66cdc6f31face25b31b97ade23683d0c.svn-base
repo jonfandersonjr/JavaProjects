@@ -1,0 +1,125 @@
+/*
+ * TCSS 305 - Tetris
+ */
+package view;
+
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
+import java.util.Observable;
+import java.util.Observer;
+import javax.swing.JFrame;
+import javax.swing.Timer;
+import model.Board;
+
+/**
+ * Class which holds my GUI and all the panels within.
+ * 
+ * @author Jon Anderson
+ * @version May 19
+ */
+public class TetrisGUI implements Observer {
+    
+    /**
+     * Delay for timer.
+     */
+    private static final int TIMER_DELAY = 1000;
+
+    /**
+     * Swing timer for the game.
+     */
+    private final Timer myTimer = new Timer(TIMER_DELAY, new MyTimer());
+    
+    //private final KeyListener myKeyListener = new KeyListener();
+    
+    /**
+     * Creates the board that we will be playing on.
+     */
+    private final Board myBoard = new Board();
+    
+    private int myBlockSize = 30;
+    
+    /**
+     * Creates the JFrame to hold all the panels for the game.
+     */
+    private final JFrame myFrame = new JFrame("Tetris");
+    
+    /**
+     * The panel where the game will be played.
+     */
+    private final GamePanel myGamePanel = new GamePanel(myBlockSize);
+    
+    /**
+     * A menu bar with some features.
+     */
+    private final TetrisMenu myMenuBar = new TetrisMenu(myBoard, myTimer);
+    
+    /**
+     * A panel to hold the pieces.
+     */
+    private final PiecePanel myPiecePanel = new PiecePanel(myBlockSize);
+    
+    
+    /**
+     * Starts the Frame with all of the game panels.
+     */
+    public void start() {
+        myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                
+        myFrame.add(myGamePanel, BorderLayout.CENTER);
+        myFrame.add(myPiecePanel, BorderLayout.EAST);
+        myFrame.setJMenuBar(myMenuBar);
+        
+        myBoard.addObserver(this);
+        myBoard.addObserver(myGamePanel);
+        myBoard.addObserver(myPiecePanel);
+        
+        myTimer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+                myBoard.step();
+            }
+        });
+         
+        myFrame.pack();
+        myFrame.setLocationRelativeTo(null);
+        myFrame.setVisible(true);
+    }
+
+
+    @Override
+    public void update(final Observable theObserv, final Object theObject) {
+        System.out.println("Inside the frame observer.");
+        //myBoard.step();
+    }
+    
+    /**
+     * Inner class with actions for Timer.
+     * 
+     * @author Jon Anderson
+     */
+    class MyTimer implements ActionListener {
+        
+        @Override
+        public void actionPerformed(final ActionEvent theAction) {
+            myTimer.start();
+            myBoard.step();
+        }
+    }
+    
+    /**
+     * Inner class with actions for Keys.
+     * @author Jon Anderson
+     *
+     */
+    class MyKeyListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(final ActionEvent theAction) {
+            // TODO Auto-generated method stub
+            
+        }
+    }
+
+}

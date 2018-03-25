@@ -1,0 +1,28 @@
+/*
+aw * TCSS 305 - Tetris
+ */
+package buttonactions;
+
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
+
+/**
+ * Action class for new game.
+ * 
+ * @author Jon Anderson
+ * @version May 19
+ */
+public class NewGame extends AbstractAction {
+
+    /**
+     * Auto generated serial ID.
+     */
+    private static final long serialVersionUID = 1230438727130306586L;
+
+    @Override
+    public void actionPerformed(final ActionEvent theEvent) {
+        
+        
+    }
+
+}

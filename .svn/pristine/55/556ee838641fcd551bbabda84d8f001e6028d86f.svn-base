@@ -1,0 +1,170 @@
+package view;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import model.Board;
+
+/**
+ * Class that creates the panel that will be holding the non-active game information.
+ * 
+ * @author Jon Anderson
+ * @version May 19
+ *
+ */
+
+public class PiecePanel extends JPanel implements Observer {
+
+    /**
+     * Auto generated serial ID.
+     */
+    private static final long serialVersionUID = 4811726021988067944L;
+    
+    /**
+     * Amount of rows in this grid panel layout.
+     */
+    private static final int ROWS = 4;
+    
+    /**
+     * Buttons in the Panel.
+     */
+    private static final int BUTTONS = 3;
+    
+    private static final String EMPTY_LABEL = "";
+    /**
+     * Size of the east panel.
+     */
+    private static final Dimension PANEL_SIZE = new Dimension(300, 200);
+    
+    /**
+     * Grid to place the buttons in.
+     */
+    private final JPanel myButtonGrid = new JPanel(new GridLayout(BUTTONS, 1));
+    
+    /**
+     * Panel which holds the timer display.
+     */
+    private final JPanel myTimerPanel = new JPanel();
+    
+    /**
+     * The Board used in the game.
+     */
+    private final Board myBoard;
+    
+    private JLabel myControlLeft = new JLabel(EMPTY_LABEL);
+
+    private JLabel myControlRight = new JLabel(EMPTY_LABEL);
+
+    private JLabel myControlDown = new JLabel(EMPTY_LABEL);
+
+    private JLabel myControlDrop = new JLabel(EMPTY_LABEL);
+
+    
+    /**
+     * Constructs a piece panel for the right side of the game frame.
+     * @param theBoard used in the game.
+     */
+    public PiecePanel(final Board theBoard) {
+        super();
+        myBoard = theBoard;
+        setLayout(new GridLayout(ROWS, 1));
+        add(createNextPiecePanel());
+        add(createInstructionsPanel());
+        createButtons();
+        add(myButtonGrid);
+        add(createScorePanel());
+    }
+    
+    /**
+     * Creates a panel to hold the next piece.
+     * @return a created next piece panel.
+     */
+    private JPanel createNextPiecePanel() {
+        final JPanel panel = new JPanel();
+        panel.setPreferredSize(PANEL_SIZE);
+        panel.setBorder(BorderFactory.createStrokeBorder(new BasicStroke(8)));        
+        return panel;
+    }
+    
+    private JPanel createInstructionsPanel() {
+        final JPanel panel = new JPanel();
+        final JPanel gridPanel = new JPanel();
+        gridPanel.setLayout(new GridLayout(ROWS, 2));
+        gridPanel.add(addLabel("Left"));
+        myControlLeft.setText("controlleft");
+        gridPanel.add(myControlLeft);
+        gridPanel.add(addLabel("Right"));
+        myControlLeft.setText("controlright");
+        gridPanel.add(myControlRight);
+        gridPanel.add(addLabel("Down"));
+        myControlLeft.setText("controldown");
+        gridPanel.add(myControlDown);
+        gridPanel.add(addLabel("Drop"));
+        myControlLeft.setText("controldrop");
+        gridPanel.add(myControlDrop);
+        panel.add(gridPanel);
+        panel.setBorder(BorderFactory.createStrokeBorder(new BasicStroke(8)));
+        return panel;
+    }
+    
+    /**
+     * Sends a name in to create the buttons.
+     */
+    private void createButtons() {
+        addButtons("New Game");
+        addButtons("Level");
+        addButtons("Settings");
+        addButtons("Pause");
+    }
+    
+    /**
+    * Creates a button and adds it to my button grid.
+    * @param theName of the button we're creating.
+    */
+    private void addButtons(final String theName) {
+        final JButton button = new JButton(theName);
+        myButtonGrid.setBorder(BorderFactory.createStrokeBorder(new BasicStroke(8)));
+        myButtonGrid.add(button);
+    }
+    
+    
+    /**
+     * Creates a panel to hold the Timer.
+     * @return a created timer panel.
+     */
+    private JPanel createScorePanel() {
+        final JPanel panel = new JPanel();
+        panel.add(addLabel("Level"));
+        panel.add(addLabel("Score"));
+        panel.setPreferredSize(PANEL_SIZE);
+        panel.setBorder(BorderFactory.createStrokeBorder(new BasicStroke(8)));
+        return panel;
+    }
+    
+    
+    private JLabel addLabel(final String theLabel) {
+        final JLabel label = new JLabel(theLabel);
+        return label;
+    }
+
+    @Override
+    public void update(final Observable theObserv, final Object theObject) {
+        if (theObserv instanceof Board) {
+            //(MoveableTetrisPiece) 
+        }
+
+        
+    }
+    
+    
+}

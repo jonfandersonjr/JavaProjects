@@ -1,0 +1,29 @@
+/*
+ * TCSS 305 - Tetris
+ */
+package view;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
+/**
+ * Background for the game panel.
+ * @author Jon Anderson
+ * @version June 2
+ *
+ */
+public class BackGroundImage extends JLabel {
+
+    /**
+     * Auto generated serial ID.
+     */
+    private static final long serialVersionUID = 4355218397733380113L;
+    
+    private final ImageIcon myIcon = new ImageIcon("images/guileimage.jpg");
+
+    public BackGroundImage() {
+        super();
+        setIcon(myIcon);
+        
+    }
+}

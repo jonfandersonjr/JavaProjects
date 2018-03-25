@@ -1,0 +1,225 @@
+package view;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.RenderingHints;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import model.Board;
+import model.TetrisPiece;
+
+/**
+ * Class that creates the panel that will be holding the non-active game information.
+ * 
+ * @author Jon Anderson
+ * @version May 19
+ *
+ */
+
+public class PiecePanel extends JPanel implements Observer {
+
+    /**
+     * Auto generated serial ID.
+     */
+    private static final long serialVersionUID = 4811726021988067944L;
+    
+    /**
+     * Amount of rows in this grid panel layout.
+     */
+    private static final int PANELS = 3;
+    
+    /**
+     * Amount of rows of labels.
+     */
+    private static final int LABEL_ROWS = 6;
+    
+    /**
+     * Default font for bolded labels.
+     */
+    private static final Font BOLD_LABEL_FONT = new Font("Serif", Font.BOLD, 28);
+    
+    /**
+     * Font for changable labels.
+     */
+    private static final Font NORMAL_FONT = new Font("Hellvetica", Font.PLAIN, 26);
+    
+    /**
+     * Width of the borders in this panel.
+     */
+    private static final BasicStroke BORDER_WIDTH = new BasicStroke(8);
+    /**
+     * Size of the east panel.
+     */
+    private static final Dimension PANEL_SIZE = new Dimension(300, 200);
+    
+    private int myBlockSize;
+    
+    /**
+     * Panel which holds the block for my next piece.
+     */
+    private final JPanel myNextPiece = createNextPiecePanel();
+    
+    /**
+     * List containing all of my labels in this panel.
+     */
+    private final List<JLabel> myLabels = new ArrayList<JLabel>();
+    
+    /**
+     * Label for the left control.
+     */
+    private final JLabel myControlLeft = addLabel("LeftArrow/A");
+
+    /**
+     * Label for the right control.
+     */
+    private final JLabel myControlRight = addLabel("RightArrow/D");
+
+    /**
+     * Label for the down control.
+     */
+    private final JLabel myControlDown = addLabel("DownArrow/S");
+
+    /**
+     * Label for the drop control.
+     */
+    private final JLabel myControlDrop = addLabel("SPACEBAR");
+    
+    /**
+     * Label for the drop control.
+     */
+    private final JLabel myControlCW = addLabel("UpArrow/W");
+    
+    /**
+     * Label for the drop control.
+     */
+    private final JLabel myControlCCW = addLabel("TAB");
+    
+    /**
+     * Panel which holds the timer display.
+     */
+    private final JPanel myScorePanel = createScorePanel();
+    
+    
+    /**
+     * Constructs a piece panel for the right side of the game frame.
+     */
+    public PiecePanel(final int theBlockSize) {
+        super();
+        myBlockSize = theBlockSize;
+        setLayout(new GridLayout(PANELS, 1));
+        add(myNextPiece);
+        add(createInstructionsPanel());
+        add(myScorePanel);
+        setLabelFont();
+    }
+    
+    /**
+     * Creates a panel to hold the next piece.
+     * @return a created next piece panel.
+     */
+    private JPanel createNextPiecePanel() {
+        final JPanel panel = new JPanel();
+        panel.setPreferredSize(PANEL_SIZE);
+        panel.setBorder(BorderFactory.createStrokeBorder(BORDER_WIDTH));        
+        return panel;
+    }
+    
+    /**
+     * Constructs an instruction panel containing labels for controls.
+     * @return an instructions panel.
+     */
+    private JPanel createInstructionsPanel() {
+        final JPanel panel = new JPanel();
+        final JPanel gridPanel = new JPanel();
+        gridPanel.setLayout(new GridLayout(LABEL_ROWS, 2));
+        gridPanel.add(addLabel("Move Left: "));
+        gridPanel.add(myControlLeft);
+        gridPanel.add(addLabel("Move Right: "));
+        gridPanel.add(myControlRight);
+        gridPanel.add(addLabel("Move Down: "));
+        gridPanel.add(myControlDown);
+        gridPanel.add(addLabel("Drop Piece: "));
+        gridPanel.add(myControlDrop);
+        gridPanel.add(addLabel("Rotate CW: "));
+        gridPanel.add(myControlCW);
+        gridPanel.add(addLabel("Roatate CCW: "));
+        gridPanel.add(myControlCCW);
+        
+        panel.add(gridPanel);
+        panel.setBorder(BorderFactory.createStrokeBorder(BORDER_WIDTH));
+        return panel;
+    }
+    
+    /**
+     * Creates a panel to hold the Timer.
+     * @return a created timer panel.
+     */
+    private JPanel createScorePanel() {
+        final JPanel panel = new JPanel();
+        panel.add(addLabel("Level"));
+        panel.add(addLabel("Score"));
+        panel.setPreferredSize(PANEL_SIZE);
+        panel.setBorder(BorderFactory.createStrokeBorder(BORDER_WIDTH));
+        return panel;
+    }
+    
+    /**
+     * Creates a label and adds it to myLabel list.
+     * @param theLabel name for the created label.
+     * @return the created label.
+     */
+    private JLabel addLabel(final String theLabel) {
+        final JLabel label = new JLabel(theLabel);
+        myLabels.add(label);
+        return label;
+    }
+    
+    /**
+     * Sets the fonts for all the labels.
+     */
+    private void setLabelFont() {
+        int count = 0;
+        for (final JLabel label: myLabels) {
+            label.setFont(NORMAL_FONT);
+            if (count > 5) {
+                label.setFont(BOLD_LABEL_FONT);
+            }
+            count++;
+        }
+    }
+    
+    @Override
+    public void paintComponent(final Graphics theGraphics) {
+        super.paintComponent(theGraphics);
+        //myPiece = new Rectangle2D(100, 100, 10, 10);
+        final Graphics2D g2d = (Graphics2D) theGraphics;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                             RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setPaint(Color.BLUE);
+        g2d.drawRect(50, 50, 25, 25);
+        
+        //Tetris Piece has getPoints();
+        //Don't import Point.awt. Import from model.
+        //g2d.fill(myPiece);
+    }
+
+    @Override
+    public void update(final Observable theObserv, final Object theObject) {
+        if (theObject instanceof TetrisPiece) {
+            //(MoveableTetrisPiece) 
+        }
+    }
+    
+    
+}

@@ -1,0 +1,34 @@
+package view;
+
+import java.awt.BorderLayout;
+import java.util.Observable;
+import javax.swing.JFrame;
+
+public class TetrisGUI extends Observable {
+    
+    private final JFrame myFrame = new JFrame("Tetris");
+    
+    private final GamePanel myGamePanel = new GamePanel();
+    
+    private final TetrisMenu myMenuBar = new TetrisMenu();
+    
+    public void start() {
+        myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                
+        myFrame.add(myGamePanel, BorderLayout.CENTER);
+        
+        
+        
+        
+        
+        
+        
+        
+        myFrame.setJMenuBar(myMenuBar);
+
+        myFrame.pack();
+        myFrame.setLocationRelativeTo(null);
+        myFrame.setVisible(true);
+    }
+
+}

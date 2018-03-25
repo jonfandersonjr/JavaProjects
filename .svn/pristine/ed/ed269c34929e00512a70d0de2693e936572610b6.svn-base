@@ -1,0 +1,119 @@
+/*
+ * TCSS 305 - Assignment 6 Tetris
+ */
+package view;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JSlider;
+
+/**
+ * Constructs a Menu Bar item to be used in my tetris game.
+ * @author Jon Anderson
+ * @version May 18
+ *
+ */
+public class TetrisMenu extends JMenuBar {
+
+    /**
+     * Auto Generated serial ID number.
+     */
+    private static final long serialVersionUID = 6523545150132007076L;
+
+    /**
+     * Max level for tetris game.
+     */
+    private static final int MAX_DIFFICULTY = 9;
+
+    /**
+     * Tick space for level difficulty.
+     */
+    private static final int MAJOR_TICK_SPACE = 2;
+
+    /**
+     * Constructs a menu bar for the Tetris Game.
+     */
+    public TetrisMenu() {
+        super();
+        add(createFileMenu());
+        add(createOptionsMenu());
+        add(createHelpMenu());
+
+    }
+
+    /**
+     * Creates a file menu in my menu bar which contains the option to quit the program.
+     * @return a completed file menu.
+     */
+    private JMenu createFileMenu() {
+        final JMenu file = new JMenu("File");
+        file.setMnemonic(KeyEvent.VK_F);
+        final JMenuItem quit = new JMenuItem("Quit");
+        quit.setMnemonic(KeyEvent.VK_Q);
+        quit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+                System.exit(ABORT);
+            }
+        });
+        file.add(quit);
+        return file;
+    }
+
+    /**
+     * Creates an options menu for the Tetris game.
+     * @return an options menu to my menu bar.
+     */
+    private JMenu createOptionsMenu() {
+        final JMenu options = new JMenu("Options");
+        options.setMnemonic(KeyEvent.VK_O);
+        final JMenu level = new JMenu("Select Level");
+        options.add(level);
+        level.add(sliderBuilder());
+        return options;
+    }
+
+    /**
+     * Creates a slider which allows the user to change the level difficulty.
+     * @return a slider to select level difficulty.
+     */
+    private JSlider sliderBuilder() {
+        final JSlider slider = new JSlider(1, MAX_DIFFICULTY, 1);
+        slider.setMajorTickSpacing(MAJOR_TICK_SPACE);
+        slider.setMinorTickSpacing(1);
+        slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+        return slider;
+    }
+
+
+
+    /**
+     * Constructs a Help Menu for the Tetris menu bar.
+     * 
+     * @return the constructed Help Menu.
+     */
+    private JMenu createHelpMenu() {
+        final String title = "About...";
+        final JMenu helpMenu = new JMenu("Help");
+        helpMenu.setMnemonic(KeyEvent.VK_H);
+        final JMenuItem about = new JMenuItem(title);
+        about.setMnemonic(KeyEvent.VK_A);
+        helpMenu.add(about);
+        about.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent arg0) {
+                JOptionPane.showMessageDialog(null, "Jon Anderson \n"
+                                + "Spring 2015 \n"
+                                + "TCSS 305 PowerPaint");
+            }
+        });
+        return helpMenu;
+    }
+
+}

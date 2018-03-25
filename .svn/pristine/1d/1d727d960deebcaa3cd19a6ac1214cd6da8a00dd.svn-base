@@ -1,0 +1,133 @@
+package view;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+import model.Block;
+import model.Board;
+
+/**
+ * Constructs a panel where the user will play the Tetris game.
+ * 
+ * @author Jon Anderson
+ * @version May 18
+ *
+ */
+public class GamePanel extends JPanel implements Observer {
+
+    /**
+     * Auto generated serial ID number.
+     */
+    private static final long serialVersionUID = 8522478904937779609L;
+    
+    /**
+     * Color of the drawn block.
+     */
+    private Color myBlockColor = Color.MAGENTA;
+    
+    /**
+     * Size of the block.
+     */
+    private final int myBlockSize;
+    
+    /**
+     * X coordinate of block on board.
+     */
+    private int myX;
+    
+    /**
+     * Y coordinate of block on board.
+     */
+    private int myY;
+    
+    /**
+     * The height of the board.
+     */
+    private final int myBoardHeight;
+    
+    /**
+     * My tetris pieces.
+     */
+    private List<Block[]> myPieces = new ArrayList<Block[]>();
+
+    /**
+     * Creates the tetris game area with default features.
+     * @param theBlockSize in this game.
+     * @param theBoardHeight of this board.
+     */
+    public GamePanel(final int theBlockSize, final int theBoardHeight) {
+        super();
+        myBlockSize = theBlockSize;
+        myBoardHeight = theBoardHeight;
+        final Dimension preferredSize = new Dimension(theBlockSize * 10, theBlockSize * 21);
+        setPreferredSize(preferredSize);
+        setBorder(BorderFactory.createStrokeBorder(new BasicStroke(3)));
+        setBackground(Color.LIGHT_GRAY);
+    }
+
+    @Override
+    public void update(final Observable theObserv, final Object theObject) {
+
+        if (theObserv instanceof Board) {
+            if (theObject instanceof ArrayList) {
+                myPieces = ((ArrayList<Block[]>)theObject);
+            }
+            repaint();
+        }
+       
+    }
+
+    @Override
+    public void paintComponent(final Graphics theGraphics) {
+        super.paintComponent(theGraphics);
+        final Graphics2D g2d = (Graphics2D) theGraphics;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                             RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setPaint(getBlockColor());
+        iterateLists(g2d);
+    }
+    
+    /**
+     * 
+     * @param theGraphics I will be painting.
+     */
+    private void iterateLists(final Graphics theGraphics) {
+        //Graphics g2d = (Graphics2D) theGraphics;
+        
+        for (int i = myPieces.size() - 1; i >= 0; i--) {
+            final Block[] blockArrays;
+            blockArrays = myPieces.get(i);
+            myY = i;
+            for (int j = 0; j <= blockArrays.length - 1; j++) {
+                myX = j * myBlockSize;
+                if (blockArrays[j] != null) {
+                    theGraphics.setColor(getBlockColor());
+                    theGraphics.fillRect(myX, (myBoardHeight - myY) * myBlockSize, 
+                                         myBlockSize, myBlockSize);
+                    theGraphics.setColor(Color.BLACK);
+                    theGraphics.drawRect(myX, (myBoardHeight - myY) * myBlockSize, 
+                                         myBlockSize, myBlockSize);
+                }
+            }   
+        }   
+    }
+    
+    /**
+     * Returns the color for the current block.
+     * @return the color of this block.
+     */
+    protected Color getBlockColor() {
+        myBlockColor = Color.CYAN;
+        return myBlockColor;
+    }
+
+}

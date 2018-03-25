@@ -1,0 +1,35 @@
+package view;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import javax.swing.JPanel;
+
+/**
+ * Constructs a panel where the user will play the Tetris game.
+ * 
+ * @author Jon Anderson
+ * @version May 18
+ *
+ */
+public class GamePanel extends JPanel {
+    
+    /**
+     * Auto generated serial ID number.
+     */
+    private static final long serialVersionUID = 8522478904937779609L;
+    
+    /**
+     * Sets a preferred original size of the Tetris game area.
+     */
+    private final Dimension myPreferredSize = new Dimension(800, 800);
+
+    /**
+     * Creates the tetris game area with default features.
+     */
+    public GamePanel() {
+        super();
+        setPreferredSize(myPreferredSize);
+        setBackground(Color.LIGHT_GRAY);
+    }
+    
+}
